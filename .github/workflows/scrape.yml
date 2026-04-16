@@ -3,7 +3,7 @@ name: Scrape Rami Levy Store 013
 on:
   schedule:
     # Runs daily at 06:00 UTC (09:00 Israel time)
-    - cron: "35 3 * * *"
+    - cron: "29 3 * * *"
   workflow_dispatch: # Allow manual trigger
 
 jobs:
