@@ -2,8 +2,8 @@ name: Scrape Rami Levy Store 013
 
 on:
   schedule:
-    # Runs daily at 06:00 UTC (09:00 Israel time)
-    - cron: "29 3 * * *"
+    # Runs daily at 06:15 UTC (09:15 Israel time)
+    - cron: "15 6 * * *"
   workflow_dispatch: # Allow manual trigger
 
 jobs:
@@ -24,9 +24,8 @@ jobs:
       - name: Run scraper
         run: python main.py
 
-      - name: Upload store 013 data
-        uses: actions/upload-artifact@v4
-        with:
-          name: rami-levy-store-013-${{ github.run_id }}
-          path: dumps/RamiLevy_store_013/
-          retention-days: 90
+      - name: Upload to Supabase
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+        run: python upload_to_supabase.py

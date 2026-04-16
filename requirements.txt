@@ -1,1 +1,3 @@
 il-supermarket-scraper
+httpx
+python-dotenv
