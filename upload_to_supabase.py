@@ -1,4 +1,5 @@
 import os
+import time
 import xml.etree.ElementTree as ET
 from pathlib import Path
 from dotenv import load_dotenv
@@ -9,7 +10,8 @@ load_dotenv()
 SUPABASE_URL = os.environ["SUPABASE_URL"]
 SUPABASE_KEY = os.environ["SUPABASE_KEY"]
 STORE_DIR = Path("dumps/RamiLevy_store_013")
-BATCH_SIZE = 200
+BATCH_SIZE = 100
+MAX_RETRIES = 3
 
 HEADERS = {
     "apikey": SUPABASE_KEY,
@@ -29,8 +31,18 @@ def supabase_request(method, table, data=None, params=None):
 def upsert_batch(table, rows):
     for i in range(0, len(rows), BATCH_SIZE):
         batch = rows[i : i + BATCH_SIZE]
-        supabase_request("POST", table, data=batch)
-        print(f"  Upserted {min(i + BATCH_SIZE, len(rows))}/{len(rows)} rows to {table}")
+        for attempt in range(MAX_RETRIES):
+            try:
+                supabase_request("POST", table, data=batch)
+                print(f"  Upserted {min(i + BATCH_SIZE, len(rows))}/{len(rows)} rows to {table}")
+                break
+            except httpx.HTTPStatusError as e:
+                if attempt < MAX_RETRIES - 1:
+                    wait = 2 ** (attempt + 1)
+                    print(f"  Retry {attempt + 1}/{MAX_RETRIES} for {table} (batch {i}), waiting {wait}s...")
+                    time.sleep(wait)
+                else:
+                    raise
 
 
 def parse_products():
