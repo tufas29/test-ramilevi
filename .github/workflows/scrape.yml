@@ -1,9 +1,10 @@
 name: Scrape Rami Levy Store 013
 
 on:
-  schedule:
-    # Runs daily at 06:15 UTC (09:15 Israel time)
-    - cron: "15 6 * * *"
+  # Scheduled runs paused — uncomment to re-enable
+  # schedule:
+  #   # Runs daily at 06:15 UTC (09:15 Israel time)
+  #   - cron: "15 6 * * *"
   workflow_dispatch: # Allow manual trigger
 
 jobs:
